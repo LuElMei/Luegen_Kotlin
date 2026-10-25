@@ -11,5 +11,5 @@ data class Deck(val cards: List<Card> = standard()) {
         }
     }
 
-    fun shuffle() = cards.shuffled()
+    fun shuffle() = copy(cards = cards.shuffled())
 }
