@@ -7,8 +7,11 @@ class GameController {
     val state = _state.asStateFlow()
 
     fun startGame(names: List<String>) {
-        val deck = Deck().shuffle()
-        val initial = GameState.initial(names, deck)
+        val outcome = GameState.initial(names)
+        when (outcome) {
+            is Outcome.Ok -> _state.value = outcome.state
+            is Outcome.Err -> println("Error!")
+        }
     }
 
     fun onAction(action: GameAction) {

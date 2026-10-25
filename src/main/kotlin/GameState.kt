@@ -7,7 +7,7 @@ data class GameState(
     val lastPlayed: List<Card>,
 ) {
     companion object {
-        fun initial(names: List<String>, deck: Deck): Outcome {
+        fun initial(names: List<String>): Outcome {
 
             if (names.size !in 2..8) {
                 return Outcome.Err(GameError.InvalidPlayerCount)
@@ -22,6 +22,8 @@ data class GameState(
             }
 
             val players = names.map { Player(it) }
+
+            val deck = Deck().shuffle()
             val withCards = players.dealCards(deck)
 
             return Outcome.Ok(GameState(
