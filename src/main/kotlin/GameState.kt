@@ -6,6 +6,34 @@ data class GameState(
     val phase: TurnPhase,
     val lastPlayed: List<Card>,
 ) {
+    companion object {
+        fun initial(names: List<String>, deck: Deck): GameState {
+            val players = names.map { Player(it) }
+            val withCards = players.dealCards(deck)
+
+            return GameState(
+                players = withCards,
+                current = withCards.random(),
+                roundRank = null,
+                pile = emptyList(),
+                lastPlayed = emptyList(),
+                phase = TurnPhase.AwaitingRank
+            )
+        }
+
+        fun List<Player>.dealCards(deck: Deck): List<Player> {
+            val hands = deck.cards
+                .withIndex()
+                .groupBy(
+                    keySelector = { it.index % size},
+                    valueTransform = { it.value },
+                )
+            return mapIndexed { index, player ->
+                player.copy(hand = hands[index] ?: emptyList())
+            }
+        }
+    }
+
     val currentIndex: Int
         get() = players.indexOf(current)
 
