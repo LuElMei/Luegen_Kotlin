@@ -7,18 +7,31 @@ data class GameState(
     val lastPlayed: List<Card>,
 ) {
     companion object {
-        fun initial(names: List<String>, deck: Deck): GameState {
+        fun initial(names: List<String>, deck: Deck): Outcome {
+
+            if (names.size !in 2..8) {
+                return Outcome.Err(GameError.InvalidPlayerCount)
+            }
+
+            if (names.any { it.isBlank() }) {
+                return Outcome.Err(GameError.BlankName)
+            }
+
+            if (names.distinct().size != names.size) {
+                return Outcome.Err(GameError.DuplicateName)
+            }
+
             val players = names.map { Player(it) }
             val withCards = players.dealCards(deck)
 
-            return GameState(
+            return Outcome.Ok(GameState(
                 players = withCards,
                 current = withCards.random(),
                 roundRank = null,
                 pile = emptyList(),
                 lastPlayed = emptyList(),
                 phase = TurnPhase.AwaitingRank
-            )
+            ))
         }
 
         fun List<Player>.dealCards(deck: Deck): List<Player> {
