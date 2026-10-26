@@ -1,27 +1,22 @@
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import view.Screen
 
 
 class GameController {
-    private val _state = MutableStateFlow<GameState?>(null)
-    val state = _state.asStateFlow()
+    private val _screenState = MutableStateFlow<Screen>(Screen.Startup)
+    val screenState = _screenState.asStateFlow()
 
-    fun startGame(names: List<String>) {
+    fun onStartGame(names: List<String>) {
         val outcome = GameState.initial(names)
         when (outcome) {
-            is Outcome.Ok -> _state.value = outcome.state
-            is Outcome.Err -> println("Error!")
+            is Outcome.Ok -> _screenState.value = Screen.Running(
+                state = outcome.state,
+                error = null,
+            )
+            is Outcome.Err -> _screenState.value = Screen.Setup(
+                error = outcome.error.toUserMessage()
+            )
         }
     }
-
-    fun onAction(action: GameAction) {
-        val currentState = _state.value ?: return
-        val outcome = GameModel.process(currentState, action)
-
-        when (outcome) {
-            is Outcome.Ok -> _state.value = outcome.state
-            is Outcome.Err -> TODO()
-        }
-    }
-
 }
