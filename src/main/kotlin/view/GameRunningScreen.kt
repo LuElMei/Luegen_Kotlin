@@ -1,18 +1,24 @@
 package view
 
+import Card
 import GameState
 import Player
+import Suit
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -24,10 +30,31 @@ private val SeatMargin = 12.dp // Abstand zwischen Tischkante und Sitz
 
 @Composable
 fun GameRunningScreen(state: GameState, error: String?) {
-    BoxWithConstraints(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
-        contentAlignment = Alignment.Center,
-    ) {
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        TableArea(
+            state = state,
+            modifier = Modifier.weight(1f).fillMaxWidth(),
+        )
+
+        error?.let {
+            Text(
+                text = it,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+            )
+        }
+
+        Spacer(Modifier.height(12.dp))
+
+        HandRow(player = state.current, modifier = Modifier.fillMaxWidth())
+    }
+}
+
+@Composable
+private fun TableArea(state: GameState, modifier: Modifier = Modifier) {
+    BoxWithConstraints(modifier = modifier, contentAlignment = Alignment.Center) {
         val tableWidth = (maxWidth * 0.5f).coerceAtMost(420.dp)
         val tableHeight = tableWidth * 0.5f
 
@@ -39,14 +66,6 @@ fun GameRunningScreen(state: GameState, error: String?) {
                 player = player,
                 isCurrent = player == state.current,
                 modifier = Modifier.offset(pos.x, pos.y),
-            )
-        }
-
-        error?.let {
-            Text(
-                text = it,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.align(Alignment.TopCenter),
             )
         }
     }
@@ -99,6 +118,63 @@ private fun PlayerSeat(player: Player, isCurrent: Boolean, modifier: Modifier = 
             Text(
                 text = "${player.cardCount()} Karten",
                 style = MaterialTheme.typography.bodySmall,
+            )
+        }
+    }
+}
+
+@Composable
+private fun HandRow(player: Player, modifier: Modifier = Modifier) {
+    val sortedHand = remember(player.hand) {
+        player.hand.sortedWith(compareBy({ it.rank }, { it.suit }))
+    }
+
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = "Hand von ${player.name}",
+            style = MaterialTheme.typography.titleSmall,
+        )
+
+        Spacer(Modifier.height(8.dp))
+
+        // Zentriert, solange alles passt; sonst horizontal scrollbar
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
+        ) {
+            items(sortedHand) { card -> CardView(card) }
+        }
+    }
+}
+
+@Composable
+private fun CardView(card: Card, modifier: Modifier = Modifier) {
+    val color = when (card.suit) {
+        Suit.HEARTS, Suit.DIAMONDS -> Color(0xFFC62828)
+        else -> Color.Black
+    }
+
+    Surface(
+        modifier = modifier.size(52.dp, 76.dp),
+        shape = RoundedCornerShape(8.dp),
+        color = Color.White,
+        border = BorderStroke(1.dp, Color.LightGray),
+        shadowElevation = 2.dp,
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                text = card.rank.symbol,
+                color = color,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+            )
+            Text(
+                text = card.suit.symbol,
+                color = color,
+                style = MaterialTheme.typography.titleLarge,
             )
         }
     }
