@@ -5,19 +5,20 @@ import androidx.compose.runtime.*
 
 @Composable
 fun MainGameScreen(controller: GameController) {
-    val state by controller.state.collectAsState()
-    var currentScreen by remember { mutableStateOf<Screen>(Screen.Startup) }
+    val screenState by controller.screenState.collectAsState()
 
-    LaunchedEffect(state) {
-        if (state != null) {
-            currentScreen = Screen.Running
-        }
-    }
-
-    when (currentScreen) {
+    when (val state = screenState) {
         is Screen.Startup -> GameStartScreen {
-            currentScreen = Screen.Setup()
+            controller.onStartPressed()
         }
-        else -> println("not implemented yet")
+
+        is Screen.Setup -> GameSetupScreen(
+            error = state.error,
+        )  {
+            controller.onStartGame(it)
+        }
+
+        is Screen.Running -> TODO()
     }
+
 }

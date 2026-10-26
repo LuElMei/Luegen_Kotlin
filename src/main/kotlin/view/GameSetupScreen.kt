@@ -3,6 +3,8 @@ package view
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,6 +16,7 @@ import kotlin.math.roundToInt
 fun GameSetupScreen(
     minPlayers: Int = 2,
     maxPlayers: Int = 8,
+    error: String?,
     onStartGame: (List<String>) -> Unit
 ) {
     var playerNames by remember {
@@ -94,6 +97,32 @@ fun GameSetupScreen(
                     },
                     modifier = Modifier.fillMaxWidth()
                 )
+            }
+        }
+
+        if (error != null) {
+            Spacer(modifier = Modifier.height(16.dp))
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer
+                ),
+                modifier = Modifier.fillMaxWidth(0.85f)
+            ) {
+                Row(
+                    modifier = Modifier.padding(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Warning,
+                        contentDescription = "Fehler"
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = error,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
         }
 

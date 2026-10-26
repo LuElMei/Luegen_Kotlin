@@ -7,6 +7,10 @@ class GameController {
     private val _screenState = MutableStateFlow<Screen>(Screen.Startup)
     val screenState = _screenState.asStateFlow()
 
+    fun onStartPressed() {
+        _screenState.value = Screen.Setup()
+    }
+
     fun onStartGame(names: List<String>) {
         val outcome = GameState.initial(names)
         when (outcome) {
