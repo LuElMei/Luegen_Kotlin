@@ -15,8 +15,8 @@ fun MainGameScreen(controller: GameController) {
     }
 
     when (currentScreen) {
-        is Screen.Startup -> StartGameScreen {
-            currentScreen = Screen.Setup
+        is Screen.Startup -> GameStartScreen {
+            currentScreen = Screen.Setup()
         }
         else -> println("not implemented yet")
     }

@@ -2,6 +2,6 @@ package view
 
 sealed interface Screen {
     object Startup : Screen
-    object Setup : Screen
+    data class Setup(val error: String? = null) : Screen
     object Running : Screen
 }

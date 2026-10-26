@@ -13,7 +13,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun StartGameScreen(
+fun GameStartScreen(
     onPressStart: () -> Unit,
 ) {
     Column(
