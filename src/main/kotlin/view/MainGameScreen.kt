@@ -2,6 +2,7 @@ package view
 
 import GameController
 import androidx.compose.runtime.*
+import view.running.GameRunningScreen
 
 @Composable
 fun MainGameScreen(controller: GameController) {
