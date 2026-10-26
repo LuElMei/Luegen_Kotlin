@@ -7,18 +7,21 @@ import androidx.compose.runtime.*
 fun MainGameScreen(controller: GameController) {
     val screenState by controller.screenState.collectAsState()
 
-    when (val state = screenState) {
+    when (val screen = screenState) {
         is Screen.Startup -> GameStartScreen {
             controller.onStartPressed()
         }
 
         is Screen.Setup -> GameSetupScreen(
-            error = state.error,
+            error = screen.error,
         )  {
             controller.onStartGame(it)
         }
 
-        is Screen.Running -> TODO()
+        is Screen.Running -> GameRunningScreen(
+            state = screen.state,
+            error = screen.error
+        )
     }
 
 }
