@@ -1,10 +1,10 @@
 data class GameState(
-    val players: List<Player>,
+    val players: List<Player> = emptyList(),
     val current: Player,
-    val roundRank: Rank?,
-    val pile: List<Card>,
-    val phase: TurnPhase,
-    val lastPlayed: List<Card>,
+    val roundRank: Rank? = null,
+    val pile: List<Card> = emptyList(),
+    val phase: TurnPhase = TurnPhase.AwaitingRank,
+    val lastPlayed: List<Card> = emptyList(),
 ) {
     companion object {
         fun initial(names: List<String>): Outcome {
